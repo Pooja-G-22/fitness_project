@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Smart AI Fitness Recommendation System</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f2f2f2;
+            text-align:center;
+            margin-top:40px;
+        }
+
+        .box{
+            width:500px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:15px;
+            box-shadow:0 0 15px gray;
+        }
+
+        h2{
+            margin-bottom:25px;
+        }
+
+        input,select,button{
+            width:90%;
+            padding:12px;
+            margin:10px;
+            font-size:16px;
+            border:1px solid #999;
+            border-radius:5px;
+        }
+
+        button{
+            background:#4CAF50;
+            color:white;
+            border:none;
+            cursor:pointer;
+            font-size:18px;
+        }
+
+        button:hover{
+            background:green;
+        }
+
+        #result{
+            margin-top:20px;
+            padding:20px;
+            background:#dff6dd;
+            border-left:6px solid green;
+            border-radius:10px;
+            color:#0b5d0b;
+            line-height:1.8;
+            font-size:18px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Smart AI Fitness Recommendation System</h2>
+
+<input id="age" placeholder="Enter Age">
+
+<input id="weight" placeholder="Enter Weight in kg">
+
+<input id="height" placeholder="Enter Height in cm">
+
+<input id="sleep" placeholder="Enter Sleep Hours">
+
+<select id="goal">
+    <option>Muscle Gain</option>
+    <option>Weight Loss</option>
+    <option>Maintain</option>
+</select>
+
+<button onclick="sendData()">Calculate</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+async function sendData(){
+
+    // Validation
+    if(
+        !document.getElementById("age").value ||
+        !document.getElementById("weight").value ||
+        !document.getElementById("height").value ||
+        !document.getElementById("sleep").value
+    ){
+        alert("Please fill all fields");
+        return;
+    }
+
+    let data = {
+        age: Number(document.getElementById("age").value),
+        weight: Number(document.getElementById("weight").value),
+        height: Number(document.getElementById("height").value),
+        sleep: Number(document.getElementById("sleep").value),
+        goal: document.getElementById("goal").value
+    };
+
+    try{
+
+        let response = await fetch("http://127.0.0.1:8000/profile", {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+        let result = await response.json();
+
+        document.getElementById("result").innerHTML =
+        "BMI = " + result.BMI +
+        "<br>Body Type = " + result.BodyType +
+        "<br>Calories = " + result.Calories +
+        "<br><br>Diet = " + result.Diet +
+        "<br><br>Workout = " + result.Workout;
+
+    }
+
+    catch(error){
+
+        document.getElementById("result").innerHTML =
+        "Error connecting backend. Check FastAPI server.";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
